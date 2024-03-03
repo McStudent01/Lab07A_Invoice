@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +18,7 @@ public class InvoiceGUI extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
         pack();
+        setMinimumSize(new Dimension(600, 400));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -43,6 +45,8 @@ public class InvoiceGUI extends JFrame
         priceField = new JTextField();
 
         JButton submitButton = new JButton("Submit");
+        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, submitButton.getPreferredSize().height));
         submitButton.addActionListener(new ActionListener()
         {
             @Override
@@ -65,9 +69,10 @@ public class InvoiceGUI extends JFrame
         mainPanel.add(quantityField);
         mainPanel.add(priceLabel);
         mainPanel.add(priceField);
+        mainPanel.add(Box.createVerticalStrut(10));
         mainPanel.add(submitButton);
+        mainPanel.add(Box.createVerticalStrut(10));
         mainPanel.add(new JScrollPane(displayArea));
-
         add(mainPanel);
     }
 
@@ -76,8 +81,17 @@ public class InvoiceGUI extends JFrame
         String businessName = businessNameField.getText();
         String address = addressField.getText();
         String itemName = itemNameField.getText();
-        int quantity = Integer.parseInt(quantityField.getText());
-        double price = Double.parseDouble(priceField.getText());
+        int quantity;
+        double price;
+        try
+        {
+            quantity = Integer.parseInt(quantityField.getText());
+            price = Double.parseDouble(priceField.getText());
+        } catch (NumberFormatException e)
+        {
+            displayArea.setText("Error: Please enter valid numbers for quantity and price.");
+            return;
+        }
 
         Business business = new Business(businessName, address);
         InvoiceTitle invoiceTitle = new InvoiceTitle("Your Invoice Title");
@@ -101,8 +115,7 @@ public class InvoiceGUI extends JFrame
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
-            public void run()
-            {
+            public void run() {
                 new InvoiceGUI();
             }
         });
